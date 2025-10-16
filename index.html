@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoKite AI Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .typing-animation {
+            animation: typing 1.5s infinite;
+        }
+        @keyframes typing {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+        .message-enter {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">🪁 GoKite AI Agent</h1>
+                <p class="text-gray-600">Ask me anything about GoKite.ai and I'll help you out!</p>
+            </div>
+        </header>
+
+        <!-- Chat Container -->
+        <main class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="h-96 overflow-y-auto p-6 space-y-4 bg-gray-50">
+                <div class="flex items-start space-x-3 message-enter">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                        AI
+                    </div>
+                    <div class="bg-white rounded-lg p-4 shadow-sm max-w-xs">
+                        <p class="text-gray-800">Hello! I'm your GoKite AI assistant. I can help answer questions about GoKite.ai services, features, and more. What would you like to know?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="border-t bg-white p-4">
+                <form id="chatForm" class="flex space-x-3">
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        placeholder="Ask me anything about GoKite.ai..."
+                        class="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                    >
+                    <button 
+                        type="submit" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+                    >
+                        <span>Send</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </main>
+
+        <!-- Quick Questions -->
+        <div class="mt-6 bg-white rounded-2xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Questions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <button class="quick-question bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-3 rounded-lg text-left transition-colors duration-200">
+                    What is artificial intelligence?
+                </button>
+                <button class="quick-question bg-green-50 hover:bg-green-100 text-green-700 px-4 py-3 rounded-lg text-left transition-colors duration-200">
+                    What is machine learning?
+                </button>
+                <button class="quick-question bg-purple-50 hover:bg-purple-100 text-purple-700 px-4 py-3 rounded-lg text-left transition-colors duration-200">
+                    Tell me about ChatGPT
+                </button>
+                <button class="quick-question bg-orange-50 hover:bg-orange-100 text-orange-700 px-4 py-3 rounded-lg text-left transition-colors duration-200">
+                    What is deep learning?
+                </button>
+                <button class="quick-question bg-red-50 hover:bg-red-100 text-red-700 px-4 py-3 rounded-lg text-left transition-colors duration-200">
+                    AI in healthcare
+                </button>
+                <button class="quick-question bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg text-left transition-colors duration-200">
+                    What is GoKite.ai?
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const messageInput = document.getElementById('messageInput');
+        const quickQuestions = document.querySelectorAll('.quick-question');
+
+        // GoKite AI Knowledge Base
+        const knowledgeBase = {
+            "what is gokite.ai": "GoKite.ai is an innovative AI-powered platform that provides intelligent solutions for businesses and individuals. We specialize in creating custom AI agents, automation tools, and smart workflows to help streamline operations and boost productivity.",
+            
+            "services": "GoKite.ai offers several key services: 1) Custom AI Agent Development - We build tailored AI assistants for your specific needs, 2) Process Automation - Streamline repetitive tasks with intelligent automation, 3) Data Analytics & Insights - Transform your data into actionable intelligence, 4) AI Integration Services - Seamlessly integrate AI capabilities into your existing systems.",
+            
+            "getting started": "Getting started with GoKite.ai is easy! Simply: 1) Contact our team through our website, 2) Schedule a consultation to discuss your needs, 3) We'll create a custom proposal for your project, 4) Once approved, our team begins development, 5) We provide training and ongoing support. You can reach us at hello@gokite.ai or through our contact form.",
+            
+            "pricing": "Our pricing is flexible and depends on your specific requirements. We offer: 1) Starter packages for small businesses, 2) Enterprise solutions for larger organizations, 3) Custom pricing for unique projects. Contact us for a personalized quote based on your needs and budget.",
+            
+            "contact": "You can reach GoKite.ai through: Email: hello@gokite.ai, Website: https://gokite.ai, or use our online contact form. Our team typically responds within 24 hours during business days.",
+            
+            "ai agents": "Our AI agents are intelligent virtual assistants that can handle various tasks like customer support, data processing, content generation, and workflow automation. Each agent is customized to your specific industry and requirements.",
+            
+            "automation": "We help automate repetitive business processes using AI and machine learning. This includes document processing, email management, data entry, report generation, and customer service workflows.",
+            
+            "support": "GoKite.ai provides comprehensive support including: Initial setup and training, Ongoing technical support, Regular updates and improvements, Documentation and tutorials, and dedicated account management for enterprise clients."
+        };
+
+        function findBestMatch(question) {
+            const lowerQuestion = question.toLowerCase();
+            
+            // Enhanced keyword matching with scoring
+            let bestMatch = null;
+            let bestScore = 0;
+            
+            for (const [key, answer] of Object.entries(knowledgeBase)) {
+                let score = 0;
+                const keyWords = key.split(' ');
+                
+                // Exact phrase match gets highest score
+                if (lowerQuestion.includes(key)) {
+                    score += 10;
+                }
+                
+                // Individual keyword matches
+                keyWords.forEach(word => {
+                    if (lowerQuestion.includes(word)) {
+                        score += 2;
+                    }
+                });
+                
+                // Bonus for question words
+                if (lowerQuestion.includes('what is') && key.startsWith('what is')) {
+                    score += 5;
+                }
+                
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMatch = answer;
+                }
+            }
+            
+            if (bestMatch && bestScore >= 2) {
+                return bestMatch;
+            }
+            
+            // Enhanced fallback responses with more patterns
+            const patterns = {
+                'ai': "Artificial Intelligence (AI) is the simulation of human intelligence in machines. It includes machine learning, natural language processing, computer vision, and robotics. AI can perform tasks that typically require human intelligence like recognizing speech, making decisions, and solving problems.",
+                'ml': knowledgeBase["machine learning"],
+                'gpt': knowledgeBase.chatgpt,
+                'openai': knowledgeBase.openai,
+                'google': knowledgeBase["google ai"],
+                'microsoft': knowledgeBase["microsoft ai"],
+                'tesla': "Tesla uses AI extensively in their autonomous driving technology (Autopilot/FSD), manufacturing robots, and energy management systems. Their AI approach focuses on computer vision and neural networks for self-driving capabilities.",
+                'robot': knowledgeBase.robotics,
+                'healthcare': knowledgeBase["ai in healthcare"],
+                'finance': knowledgeBase["ai in finance"],
+                'education': knowledgeBase["ai in education"],
+                'python': knowledgeBase["python ai"],
+                'tensorflow': knowledgeBase.tensorflow,
+                'pytorch': knowledgeBase.pytorch,
+                'ethics': knowledgeBase["ai ethics"],
+                'bias': knowledgeBase["ai bias"],
+                'safety': knowledgeBase["ai safety"],
+                'future': "The future of AI includes developments in artificial general intelligence (AGI), more sophisticated language models, better human-AI collaboration, AI in scientific research, autonomous systems, and addressing challenges like AI safety, ethics, and regulation.",
+                'job': "AI will transform jobs by automating routine tasks while creating new opportunities in AI development, data science, and human-AI collaboration. Some jobs may be displaced, but history shows technology typically creates more jobs than it eliminates. Reskilling and adaptation will be key.",
+                'learn': "To learn AI, start with: 1) Basic math (statistics, linear algebra), 2) Programming (Python is recommended), 3) Online courses (Coursera, edX, Udacity), 4) Practice with datasets, 5) Build projects, 6) Join AI communities. Start with machine learning basics before moving to deep learning."
+            };
+            
+            for (const [pattern, response] of Object.entries(patterns)) {
+                if (lowerQuestion.includes(pattern)) {
+                    return response;
+                }
+            }
+            
+            // GoKite.ai fallback for business inquiries
+            if (lowerQuestion.includes('price') || lowerQuestion.includes('cost') || lowerQuestion.includes('business') || lowerQuestion.includes('service')) {
+                return "For business AI solutions and custom development, GoKite.ai offers flexible pricing and comprehensive services. We specialize in AI agents, automation, and integration. Contact us at hello@gokite.ai for a personalized consultation and quote.";
+            }
+            
+            // Default response
+            return "That's an interesting question about AI! I have knowledge about artificial intelligence, machine learning, popular AI companies like OpenAI and Google, AI applications in various industries, programming tools, and much more. Could you be more specific about what aspect of AI you'd like to know about? Or feel free to ask about GoKite.ai's services!";
+        }
+
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex items-start space-x-3 message-enter ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = `w-8 h-8 ${isUser ? 'bg-green-500' : 'bg-blue-500'} rounded-full flex items-center justify-center text-white font-bold text-sm`;
+            avatar.textContent = isUser ? 'You' : 'AI';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = `${isUser ? 'bg-green-100' : 'bg-white'} rounded-lg p-4 shadow-sm max-w-xs lg:max-w-md`;
+            
+            const messageText = document.createElement('p');
+            messageText.className = 'text-gray-800';
+            messageText.textContent = content;
+            
+            messageContent.appendChild(messageText);
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'flex items-start space-x-3';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm';
+            avatar.textContent = 'AI';
+            
+            const typingContent = document.createElement('div');
+            typingContent.className = 'bg-white rounded-lg p-4 shadow-sm';
+            
+            const typingText = document.createElement('p');
+            typingText.className = 'text-gray-500 typing-animation';
+            typingText.textContent = 'Typing...';
+            
+            typingContent.appendChild(typingText);
+            typingDiv.appendChild(avatar);
+            typingDiv.appendChild(typingContent);
+            
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, true);
+            messageInput.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Simulate AI response delay
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = findBestMatch(message);
+                addMessage(response);
+            }, 1000 + Math.random() * 1000);
+        });
+
+        // Handle quick questions
+        quickQuestions.forEach(button => {
+            button.addEventListener('click', function() {
+                const question = this.textContent;
+                messageInput.value = question;
+                chatForm.dispatchEvent(new Event('submit'));
+            });
+        });
+
+        // Focus input on load
+        messageInput.focus();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98f4b143c371ded3',t:'MTc2MDU4NzY3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
